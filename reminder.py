@@ -1,7 +1,7 @@
 import unittest
 
 
-class MilkReminder:
+class Reminder:
 	def shouldRemind(self, averageDaysBetweenPurchases, daysSinceLastPurchase):
 		if daysSinceLastPurchase == None:
 			return False
@@ -15,9 +15,9 @@ class MilkReminder:
 		return True
 
 
-class MilkReminderTest(unittest.TestCase):
+class ReminderTest(unittest.TestCase):
 	def setUp(self):
-		self.reminder = MilkReminder()
+		self.reminder = Reminder()
 		self.averageDaysBetweenPurchases = None
 		self.daysSinceLastPurchase = None
 
