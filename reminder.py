@@ -1,54 +1,71 @@
 import unittest
-
+from datetime import date, timedelta
+from average_days_between import AverageDaysBetween
 
 class Reminder:
-	def shouldRemind(self, averageDaysBetweenPurchases, daysSinceLastPurchase):
-		if daysSinceLastPurchase == None:
-			return False
+  def __init__(self, today):
+    self.today = today
+    self.averageDaysBetween = AverageDaysBetween(self.today)
 
-		if averageDaysBetweenPurchases == None:
-			return False
+  def shouldRemind(self, dates):
+    if len(dates) < 2:
+      return False
 
-		if daysSinceLastPurchase < averageDaysBetweenPurchases:
-			return False
+    averageDays = self.averageDaysBetween.calculate(dates)
 
-		return True
+#    dates.sort()
+    lastDate = dates[-1] 
+    checkDate = lastDate + timedelta(days=averageDays)
+    if checkDate <= self.today:
+      return True
+    else:
+      return False
 
 
 class ReminderTest(unittest.TestCase):
-	def setUp(self):
-		self.reminder = Reminder()
-		self.averageDaysBetweenPurchases = None
-		self.daysSinceLastPurchase = None
+  def setUp(self):
+    self.reminder = Reminder(date.today())
+    self.dates = []
 
-	def testNoAverageHistory(self):
-		actual = self.reminder.shouldRemind(self.averageDaysBetweenPurchases, self.daysSinceLastPurchase)
-		self.assertEqual( False, actual )
-	
-	def testWithOnePreviousPurchaseShouldNotReceiveAlert(self):
-		self.daysSinceLastPurchase = 5
-		actual = self.reminder.shouldRemind(self.averageDaysBetweenPurchases, self.daysSinceLastPurchase)
-		self.assertEqual( False, actual )
+  def testNoPurchaseDatesShouldNotRemind(self):
+    actual = self.reminder.shouldRemind(self.dates)
+    self.assertEqual(False, actual)
 
-	def testWithAverageEqualToDaysSinceLastPurchaseShouldReceiveAlert(self):
-		self.averageDaysBetweenPurchases = 5
-		self.daysSinceLastPurchase = 5
-		actual = self.reminder.shouldRemind(self.averageDaysBetweenPurchases, self.daysSinceLastPurchase)
-		self.assertEqual( True, actual )
-	
-	def testShouldNotReceiveAlertIfLessThanAverage(self):
-		self.averageDaysBetweenPurchases = 6
-		self.daysSinceLastPurchase = 5
-		actual = self.reminder.shouldRemind(self.averageDaysBetweenPurchases, self.daysSinceLastPurchase)
-		self.assertEqual( False, actual )
-		
-	def testShouldReceiveAlertIfGreaterThanAverage(self):
-		self.averageDaysBetweenPurchases = 5
-		self.daysSinceLastPurchase = 6
-		actual = self.reminder.shouldRemind(self.averageDaysBetweenPurchases, self.daysSinceLastPurchase)
-		self.assertEqual( True, actual )
+  def testSinglePreviousPurchaseDoesNotRemind(self):
+    self.dates.append(date(2010, 1, 1))
+    actual = self.reminder.shouldRemind(self.dates)
+    self.assertEqual(False, actual)
+
+  def testRemindsIfOlderThanLastDatePlusAverageDays(self):
+    self.reminder = Reminder(date(2013, 1, 10))
+    self.dates.append(date(2013, 1, 1))
+    self.dates.append(date(2013, 1, 5))
+    actual = self.reminder.shouldRemind(self.dates)
+    self.assertEqual(True, actual)
+
+  def testRemindsIfEqualToLastDatePlusAverageDays(self):
+    self.reminder = Reminder(date(2013, 1, 9))
+    self.dates.append(date(2013, 1, 1))
+    self.dates.append(date(2013, 1, 5))
+    actual = self.reminder.shouldRemind(self.dates)
+    self.assertEqual(True, actual)
+
+  def testDoesntRemindIfGreaterThanLastDatePlusAverageDays(self):
+    self.reminder = Reminder(date(2013, 1, 8))
+    self.dates.append(date(2013, 1, 1))
+    self.dates.append(date(2013, 1, 5))
+    actual = self.reminder.shouldRemind(self.dates)
+    self.assertEqual(False, actual)
+
+  def testRemindsIfDatesOutOfOrder(self):
+    self.reminder = Reminder(date(2013, 1, 5))
+    self.dates.append(date(2013, 1, 4))
+    self.dates.append(date(2013, 1, 1))
+    actual = self.reminder.shouldRemind(self.dates)
+    self.assertEqual(False, actual)
+
 
 if __name__ == "__main__":
-	unittest.main()
+  unittest.main()
 
 
