@@ -9,15 +9,15 @@ class AverageDaysBetween:
     if len(dates) < 2:
       return None
 
-    dates.sort()
+    sortedDates = sorted(dates)
 
-    for d in dates:
+    for d in sortedDates:
       if (d - self.today).days > 0:
         raise InvalidDateError("purchase dates must be prior to today")
 
     days = []
-    for x in range(1, len(dates)):
-      days.append((dates[x] - dates[x-1]).days)
+    for x in range(1, len(sortedDates)):
+      days.append((sortedDates[x] - sortedDates[x-1]).days)
 
     average = sum(days) / float(len(days))
     return average
@@ -71,6 +71,15 @@ class AverageDaysBetweenTest(unittest.TestCase):
     self.dates.append(date(2013, 1, 1))
     with self.assertRaises(InvalidDateError):
       a.calculate(self.dates)
+
+  def testDatesIsNotSortedInPlace(self):
+    self.dates.append(date(2013, 1, 2))
+    self.dates.append(date(2013, 1, 1))
+    self.dates.append(date(2012, 12, 31))
+    self.averageDaysBetween.calculate(self.dates)
+    self.assertEqual(date(2013, 1, 2), self.dates[0])
+    self.assertEqual(date(2013, 1, 1), self.dates[1])
+    self.assertEqual(date(2012, 12, 31), self.dates[2])
 
 
 if __name__ == "__main__":

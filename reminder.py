@@ -13,8 +13,8 @@ class Reminder:
 
     averageDays = self.averageDaysBetween.calculate(dates)
 
-#    dates.sort()
-    lastDate = dates[-1] 
+    sortedDates = sorted(dates)
+    lastDate = sortedDates[-1] 
     checkDate = lastDate + timedelta(days=averageDays)
     if checkDate <= self.today:
       return True
