@@ -52,8 +52,3 @@ class AverageDaysBetweenTest(unittest.TestCase):
     self.assertEqual(date(2013, 1, 1), self.dates[1])
     self.assertEqual(date(2012, 12, 31), self.dates[2])
 
-
-if __name__ == "__main__":
-  unittest.main()
-
-

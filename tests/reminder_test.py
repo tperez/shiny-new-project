@@ -45,8 +45,3 @@ class ReminderTest(unittest.TestCase):
     actual = self.reminder.shouldRemind(self.dates)
     self.assertEqual(False, actual)
 
-
-if __name__ == "__main__":
-  unittest.main()
-
-
