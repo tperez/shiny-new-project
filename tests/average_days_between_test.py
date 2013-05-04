@@ -1,6 +1,6 @@
 import unittest
 from datetime import date
-from average_days_between import *
+from reminder.average_days_between import AverageDaysBetween, InvalidDateError
 
 class AverageDaysBetweenTest(unittest.TestCase):
   def setUp(self):

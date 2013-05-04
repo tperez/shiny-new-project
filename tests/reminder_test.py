@@ -1,7 +1,7 @@
 import unittest
 from datetime import date, timedelta
-from reminder import *
-from average_days_between import AverageDaysBetween
+from reminder.reminder import Reminder
+import reminder.average_days_between 
 
 class ReminderTest(unittest.TestCase):
   def setUp(self):
